@@ -5,6 +5,11 @@
  */
 package socketjava;
 
+import java.net.*;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author enric
@@ -15,7 +20,14 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        ServerSocket serverSocket;
+        try {
+            serverSocket=new ServerSocket(2000);
+            serverSocket.accept();
+            serverSocket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
