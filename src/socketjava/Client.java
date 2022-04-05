@@ -7,6 +7,7 @@ package socketjava;
 
 import java.net.*;
 import java.io.*;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,14 @@ public class Client {
             System.out.println("Connessione Avvenuta\n");
             System.out.println("Socket" + socket);
             
+            BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bw.write("date\n");
+            bw.flush();
+            
+            Timestamp time=new Timestamp(Long.parseLong(br.readLine()));
+            System.out.println(time);
+            
+            bw.close();
             br.close();
             socket.close();
         } catch (IOException ex) {
