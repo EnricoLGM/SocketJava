@@ -22,7 +22,16 @@ public class Client {
     public static void main(String[] args) {
         Socket socket;
         try {
-            socket=new Socket("127.0.0.1",2000);
+            //socket=new Socket("unobravo.com",80);
+            socket=new Socket(InetAddress.getLocalHost(),2000);
+            //socket=new Socket("127.0.0.1",2000);
+
+            BufferedReader br=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println(br.readLine());
+            System.out.println("Connessione Avvenuta\n");
+            System.out.println("Socket" + socket);
+            
+            br.close();
             socket.close();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);

@@ -23,7 +23,14 @@ public class Server {
         ServerSocket serverSocket;
         try {
             serverSocket=new ServerSocket(2000);
-            serverSocket.accept();
+            Socket socket=serverSocket.accept();
+            
+            BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bw.write("Benvenuto!");
+            bw.flush();
+                        
+            bw.close();
+            socket.close();
             serverSocket.close();
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
