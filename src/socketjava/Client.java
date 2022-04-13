@@ -17,34 +17,59 @@ import java.util.logging.Logger;
  */
 public class Client {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Socket socket;
+    Socket client;
+    BufferedReader reader;
+    BufferedWriter writer;
+    
+    public Client(InetAddress ip, int porta) {
         try {
-            //socket=new Socket("unobravo.com",80);
-            socket=new Socket(InetAddress.getLocalHost(),2000);
-            //socket=new Socket("127.0.0.1",2000);
-
-            BufferedReader br=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(br.readLine());
-            System.out.println("Connessione Avvenuta\n");
-            System.out.println("Socket" + socket);
-            
-            BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            bw.write("date\n");
-            bw.flush();
-            
-            Timestamp time=new Timestamp(Long.parseLong(br.readLine()));
-            System.out.println(time);
-            
-            bw.close();
-            br.close();
-            socket.close();
+            client=new Socket(ip, porta);
+            reader=new BufferedReader(new InputStreamReader(client.getInputStream()));
+            writer=new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    public void lettura() {
+        try {
+            System.out.println(reader.readLine());
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Connessione Avvenuta\n");
+        System.out.println("Socket" + client);
+    }
+    
+    public void scrittura(String testo) {
+        try {
+            //scrivo al server un testo dato come parametro alla funzione
+            writer.write(testo+"\n");
+            writer.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void data() {
+        try {
+            //scrivo la richiesta al server
+            writer.write("date\n");
+            writer.flush();
+            
+            //leggo la richiesta e la mostro in output
+            Timestamp time=new Timestamp(Long.parseLong(reader.readLine()));
+            System.out.println(time);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void chiusura() {
+        try {
+            client.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }    
 }

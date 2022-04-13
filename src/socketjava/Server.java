@@ -7,7 +7,6 @@ package socketjava;
 
 import java.net.*;
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,35 +15,72 @@ import java.util.logging.Logger;
  * @author enric
  */
 public class Server {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        ServerSocket serverSocket;
-        String data=LocalDateTime.now().toString();
+    
+    ServerSocket serverSock;
+    Socket server;
+    BufferedReader reader;
+    BufferedWriter writer;
+    
+    public Server(int porta) {
         try {
-            serverSocket=new ServerSocket(2000);
-            Socket socket=serverSocket.accept();
-            serverSocket.close();
-            
-            BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            bw.write("Benvenuto!\n");
-            bw.flush();
-            
-            BufferedReader br=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            if("date".equals(br.readLine())) {
-                Long tmStmp = System.currentTimeMillis();
-                bw.write(tmStmp+"\n");
-                bw.flush();
-            }
-             
-            br.close();
-            bw.close();
-            socket.close();
+            serverSock=new ServerSocket(porta);
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    public void attendi() {
+        try {
+            server=serverSock.accept();
+            reader=new BufferedReader(new InputStreamReader(server.getInputStream()));
+            writer=new BufferedWriter(new OutputStreamWriter(server.getOutputStream()));
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void chiusuraServer() {
+        try {
+            serverSock.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void chiusuraConnessione() {
+        try {
+            server.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void scrittura() {
+        try {
+            writer.write("Benvenuto!\n");
+            writer.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void lettura() {
+        try {
+            System.out.println(reader.readLine());
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void data() {
+        try {
+            if("date".equals(reader.readLine())) {
+                Long tmStmp = System.currentTimeMillis();
+                writer.write(tmStmp+"\n");
+                writer.flush();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
